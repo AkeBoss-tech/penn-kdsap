@@ -1,0 +1,68 @@
+---
+import { readFile, readdir } from 'node:fs/promises';
+import { join } from 'node:path';
+
+const sourceDirectory = join(process.cwd(), 'site-html-archive/pages');
+const sourceFiles = (await readdir(sourceDirectory)).filter((file) => file.endsWith('.html'));
+
+export async function getStaticPaths() {
+  const directory = join(process.cwd(), 'site-html-archive/pages');
+  const files = (await readdir(directory)).filter((file) => file.endsWith('.html'));
+  return files.map((file) => ({ params: { slug: file === 'index.html' ? undefined : file.slice(0, -5) } }));
+}
+
+const slug = Array.isArray(Astro.params.slug) ? Astro.params.slug.join('/') : Astro.params.slug;
+const sourceName = slug ? `${slug}.html` : 'index.html';
+if (!sourceFiles.includes(sourceName)) {
+  throw new Error(`No archived source for ${sourceName}`);
+}
+const original = await readFile(join(sourceDirectory, sourceName), 'utf8');
+const capture = (expression: RegExp, fallback = '') => original.match(expression)?.[1] ?? fallback;
+const originalTitle = capture(/<title>([\s\S]*?)<\/title>/i, 'Penn KDSAP');
+const pageLabel = originalTitle.replace(/\s*\|\s*Penn KDSAP/i, '').trim();
+const title = pageLabel === 'Home'
+  ? 'Penn KDSAP | Kidney Disease Screening & Awareness at Penn'
+  : `${pageLabel} | Penn KDSAP`;
+const description = pageLabel === 'Home'
+  ? 'Penn KDSAP is a student-led organization advancing kidney disease screening, health education, and community awareness in Philadelphia.'
+  : `Learn about ${pageLabel} at Penn KDSAP, a student-led kidney disease screening and awareness organization at the University of Pennsylvania.`;
+const image = capture(/<meta property="og:image" content="([^"]+)"/i);
+const styles = [...original.matchAll(/<style[^>]*>[\s\S]*?<\/style>/gi)].map((match) => match[0]).join('\n');
+const header = capture(/(<header\b[\s\S]*?<\/header>)/i);
+const main = capture(/(<main\b[\s\S]*?<\/main>)/i);
+const footer = capture(/(<footer\b[\s\S]*?<\/footer>)/i);
+const body = [header, main, footer].filter(Boolean).join('\n');
+const localizedBody = body
+  .replaceAll('https://www.pennkdsap.org/', `${import.meta.env.BASE_URL}`)
+  .replaceAll('https://www.pennkdsap.org', `${import.meta.env.BASE_URL}`);
+const path = slug ? `/${slug}/` : '/';
+const canonical = new URL(`${import.meta.env.BASE_URL}${slug ? `${slug}/` : ''}`, Astro.site).toString();
+---
+
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>{title}</title>
+    <meta name="description" content={description} />
+    <link rel="canonical" href={canonical} />
+    <link rel="icon" href={`${import.meta.env.BASE_URL}favicon.png`} type="image/png" />
+    <meta property="og:type" content="website" />
+    <meta property="og:site_name" content="Penn KDSAP" />
+    <meta property="og:title" content={title} />
+    <meta property="og:description" content={description} />
+    <meta property="og:url" content={canonical} />
+    {image && <meta property="og:image" content={image} />}
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content={title} />
+    <meta name="twitter:description" content={description} />
+    {image && <meta name="twitter:image" content={image} />}
+    <meta name="robots" content="index, follow" />
+    <Fragment set:html={styles} />
+    <style is:global>body { margin: 0; }</style>
+  </head>
+  <body data-page={path}>
+    <Fragment set:html={localizedBody} />
+  </body>
+</html>
