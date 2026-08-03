@@ -4,6 +4,7 @@ import { join } from 'node:path';
 const root = process.cwd();
 const sourceDirectory = join(root, 'site-html-archive/pages');
 const outputDirectory = join(root, 'dist');
+const deploymentBase = '/penn-kdsap';
 const pages = (await readdir(sourceDirectory)).filter((file) => file.endsWith('.html'));
 
 await rm(outputDirectory, { recursive: true, force: true });
@@ -11,6 +12,11 @@ await mkdir(outputDirectory, { recursive: true });
 
 for (const page of pages) {
   let html = await readFile(join(sourceDirectory, page), 'utf8');
+  // Preserve navigation within the GitHub Pages copy instead of returning to
+  // the source Wix site. Links to other hosts are intentionally unchanged.
+  html = html
+    .replaceAll('https://www.pennkdsap.org/', `${deploymentBase}/`)
+    .replaceAll('https://www.pennkdsap.org', deploymentBase);
   const staticLayoutScript = page === 'index.html'
     ? '<script src="js/complete-static-layout.js"></script>'
     : '<script src="../js/complete-static-layout.js"></script>';
