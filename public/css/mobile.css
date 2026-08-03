@@ -187,6 +187,76 @@
     height: auto !important;
   }
 
+  /* Keep desktop canvas sections from clipping their reflowed mobile content. */
+  #PAGES_CONTAINER #SITE_PAGES,
+  #PAGES_CONTAINER #SITE_PAGES_TRANSITION_GROUP,
+  #PAGES_CONTAINER [id^='Container'] {
+    height: auto !important;
+    min-height: 0 !important;
+  }
+
+  /* Mobile-only reconstruction of the fixed-position Executive Board. */
+  #comp-l7tbqgc81,
+  #comp-l7tbqgc81 > [data-mesh-id$='inlineContent'],
+  [data-mesh-id='comp-l7tbqgc81inlineContent-gridContainer'] {
+    height: auto !important;
+    min-height: 0 !important;
+  }
+
+  [data-mesh-id='comp-l7tbqgc81inlineContent-gridContainer'] {
+    display: block !important;
+    width: 100% !important;
+    max-width: none !important;
+    margin: 0 !important;
+  }
+
+  .mobile-profile-grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 28px 16px;
+    width: min(100% - 32px, 620px);
+    margin: 28px auto 44px;
+  }
+
+  .mobile-profile-card {
+    min-width: 0;
+    text-align: center;
+  }
+
+  .mobile-profile-card img {
+    display: block;
+    aspect-ratio: 147 / 187;
+    width: min(100%, 170px) !important;
+    height: auto !important;
+    margin: 0 auto 12px;
+    border-radius: 50%;
+    object-fit: cover;
+  }
+
+  .mobile-profile-card h2,
+  .mobile-profile-card p {
+    margin: 0;
+    color: #292929;
+    overflow-wrap: anywhere;
+  }
+
+  .mobile-profile-card h2 {
+    font: 600 15px/1.25 Arial, sans-serif;
+    letter-spacing: .02em;
+  }
+
+  .mobile-profile-card p {
+    margin-top: 5px;
+    font: 13px/1.35 Georgia, serif;
+  }
+
+  @media (max-width: 360px) {
+    .mobile-profile-grid {
+      grid-template-columns: minmax(0, 1fr);
+      max-width: 240px;
+    }
+  }
+
   #SITE_FOOTER [data-mesh-id$='gridContainer'] {
     display: flex !important;
     flex-direction: column !important;

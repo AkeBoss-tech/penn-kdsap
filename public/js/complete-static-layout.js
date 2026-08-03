@@ -87,6 +87,58 @@
     document.querySelector('#SITE_HEADER')?.append(toggle, menu);
   };
 
+  /*
+   * The Executive Board was authored as a fixed-position desktop canvas. The
+   * original Wix mobile runtime supplied a separate layout for it, but that
+   * runtime is intentionally not included in this static mirror. Rebuild the
+   * roster from the preserved content on small screens so each photo, name,
+   * and role remains a readable card instead of occupying the same desktop
+   * coordinates.
+   */
+  const mountMobileBoard = () => {
+    if (window.matchMedia('(min-width: 701px)').matches) return;
+    const roster = document.querySelector('[data-mesh-id="comp-l7tbqgc81inlineContent-gridContainer"]');
+    if (!roster || roster.dataset.mobileBoardMounted) return;
+
+    const images = [...roster.querySelectorAll('.wixui-image img')];
+    const details = [...roster.querySelectorAll('.wixui-rich-text')]
+      .map((element) => element.textContent.trim())
+      .filter(Boolean);
+    if (!details.length) return;
+
+    const cards = document.createElement('div');
+    cards.className = 'mobile-profile-grid';
+    const people = Math.max(images.length, Math.ceil(details.length / 2));
+    for (let index = 0; index < people; index += 1) {
+      const name = details[index * 2];
+      const role = details[index * 2 + 1];
+      if (!name && !role) continue;
+
+      const card = document.createElement('article');
+      card.className = 'mobile-profile-card';
+      const image = images[index];
+      if (image) {
+        const portrait = image.cloneNode(true);
+        portrait.removeAttribute('id');
+        portrait.removeAttribute('fetchpriority');
+        portrait.loading = 'lazy';
+        card.append(portrait);
+      }
+      const heading = document.createElement('h2');
+      heading.textContent = name || 'Penn KDSAP Executive Board';
+      card.append(heading);
+      if (role) {
+        const description = document.createElement('p');
+        description.textContent = role;
+        card.append(description);
+      }
+      cards.append(card);
+    }
+
+    roster.replaceChildren(cards);
+    roster.dataset.mobileBoardMounted = 'true';
+  };
+
   const mountDesktopDropdowns = () => {
     if (window.matchMedia('(max-width: 700px)').matches) return;
     const menu = document.querySelector('#comp-j91nuigkitemsContainer');
@@ -121,6 +173,7 @@
     completeAnimations();
     hideLoginControl();
     mountMobileMenu();
+    mountMobileBoard();
     mountDesktopDropdowns();
   }, delay));
 })();
