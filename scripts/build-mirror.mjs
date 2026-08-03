@@ -5,19 +5,42 @@ const root = process.cwd();
 const sourceDirectory = join(root, 'site-html-archive/pages');
 const outputDirectory = join(root, 'dist');
 const deploymentBase = '/penn-kdsap';
+const ogImageUrl = 'https://akashdubey.me/penn-kdsap/images/penn-kdsap-og.png';
 const pages = (await readdir(sourceDirectory)).filter((file) => file.endsWith('.html'));
+const galleryImageDirectory = join(root, 'public/images/gallery');
+const galleryImageFiles = (await readdir(galleryImageDirectory)).filter((file) => /\.jpe?g$/i.test(file)).sort();
+const galleryTemplate = await readFile(join(root, 'content/gallery-page.html'), 'utf8');
+const galleryImages = galleryImageFiles.map((file, index) => {
+  const alt = `Penn KDSAP event photo ${index + 1}`;
+  const image = `../images/gallery/${file}`;
+  return `<a href="${image}" target="_blank" rel="noopener" aria-label="Open full-size photo ${index + 1}"><img src="${image}" alt="${alt}" loading="${index < 4 ? 'eager' : 'lazy'}" decoding="async"></a>`;
+}).join('\n        ');
+const localizeWixMedia = (html) => html
+  .replace(/https:\/\/static\.wixstatic\.com\/media\/([^\/"')?]+)(?:\/v1\/[^"')?\s<]+)?/g, (_, name) => `${deploymentBase}/images/wix/${decodeURIComponent(name)}`)
+  .replace(/https:\\\/\\\/static\.wixstatic\.com\\\/media\\\/([^\\\/"')?]+)(?:\\\/v1\\\/[^\\"')?\s<]+)?/g, (_, name) => `${deploymentBase}/images/wix/${decodeURIComponent(name)}`);
+const setShareImage = (html) => html
+  .replace(/(<meta property="og:image" content=")[^"]+("\/>)/g, `$1${ogImageUrl}$2`)
+  .replace(/(<meta property="og:image:width" content=")[^"]+("\/>)/g, (_, start, end) => `${start}1200${end}`)
+  .replace(/(<meta property="og:image:height" content=")[^"]+("\/>)/g, (_, start, end) => `${start}630${end}`)
+  .replace(/(<meta name="twitter:image" content=")[^"]+("\/>)/g, `$1${ogImageUrl}$2`);
 
 await rm(outputDirectory, { recursive: true, force: true });
 await mkdir(outputDirectory, { recursive: true });
 
 for (const page of pages) {
-  let html = await readFile(join(sourceDirectory, page), 'utf8');
+  let html = page === 'gallery.html'
+    ? galleryTemplate.replace('{{GALLERY_IMAGES}}', galleryImages)
+    : await readFile(join(sourceDirectory, page), 'utf8');
   // Preserve navigation within the GitHub Pages copy instead of returning to
   // the source Wix site. Links to other hosts are intentionally unchanged.
   html = html
     .replaceAll('https://www.pennkdsap.org/', `${deploymentBase}/`)
     .replaceAll('https://www.pennkdsap.org', deploymentBase);
-  const staticLayoutScript = page === 'index.html'
+  html = localizeWixMedia(html);
+  html = setShareImage(html);
+  const staticLayoutScript = page === 'gallery.html'
+    ? ''
+    : page === 'index.html'
     ? '<script src="js/complete-static-layout.js"></script>'
     : '<script src="../js/complete-static-layout.js"></script>';
   const mobileStylesheet = page === 'index.html'

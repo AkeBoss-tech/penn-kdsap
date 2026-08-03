@@ -1,3 +1,55 @@
+/* Dropdown behavior for the archived Wix navigation, which normally depends on
+   Wix's client runtime. */
+@media (min-width: 701px) {
+  #comp-j91nuigkitemsContainer.static-dropdowns-enabled > li:has(> ul) {
+    position: relative;
+  }
+
+  #comp-j91nuigkitemsContainer.static-dropdowns-enabled > li > ul {
+    position: absolute;
+    z-index: 100003;
+    top: calc(100% + 6px);
+    left: 0;
+    display: none !important;
+    min-width: 190px;
+    margin: 0;
+    padding: 8px 0;
+    list-style: none;
+    background: #fff;
+    box-shadow: 0 5px 16px rgba(0, 0, 0, .2);
+  }
+
+  #comp-j91nuigkitemsContainer.static-dropdowns-enabled > li.static-submenu-open > ul {
+    display: block !important;
+  }
+
+  #comp-j91nuigkitemsContainer.static-dropdowns-enabled > li > ul a {
+    display: block;
+    padding: 10px 16px;
+    color: #045184;
+    font: 16px/1.25 Arial, sans-serif;
+    text-decoration: none;
+  }
+
+  #comp-j91nuigkitemsContainer.static-dropdowns-enabled > li > ul a:hover,
+  #comp-j91nuigkitemsContainer.static-dropdowns-enabled > li > ul a:focus-visible {
+    color: #fff;
+    background: #2e3361;
+  }
+
+  #comp-j91nuigkitemsContainer.static-dropdowns-enabled .H4AHlN {
+    clip-path: none;
+    position: relative;
+    width: 16px;
+    height: 16px;
+    margin-left: -7px;
+    padding: 0;
+    border: 0;
+    background: transparent;
+    vertical-align: middle;
+  }
+}
+
 @media (max-width: 700px) {
   html,
   body {
@@ -70,6 +122,36 @@
     color: #045184;
     font: 16px/1.3 Arial, sans-serif;
     text-decoration: none;
+  }
+
+  .mobile-menu-group {
+    position: relative;
+  }
+
+  .mobile-menu-group > a {
+    padding-right: 56px;
+  }
+
+  .mobile-submenu-toggle {
+    position: absolute;
+    top: 0;
+    right: 0;
+    width: 52px;
+    height: 45px;
+    border: 0;
+    color: #045184;
+    background: transparent;
+    font-size: 26px;
+  }
+
+  .mobile-submenu {
+    padding: 0 0 7px 18px;
+    background: #f4f7f9;
+  }
+
+  .mobile-submenu a {
+    padding: 9px 18px;
+    font-size: 15px;
   }
 
   #PAGES_CONTAINER *,

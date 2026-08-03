@@ -6,6 +6,8 @@
   "scripts": {
     "dev": "astro dev",
     "build": "node scripts/build-mirror.mjs",
+    "download:wix-images": "node scripts/download-wix-images.mjs",
+    "create:og-image": "node scripts/create-og-image.mjs",
     "preview": "astro preview",
     "screenshots": "node scripts/capture-sitemap-screenshots.mjs"
   },
