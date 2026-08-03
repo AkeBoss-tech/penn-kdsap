@@ -20,7 +20,10 @@
   const text = (selector, value) => {
     if (!value) return;
     const element = document.querySelector(selector);
-    if (element) element.textContent = value;
+    // Preserve the captured Wix heading/paragraph markup and its typography.
+    // Replacing the rich-text wrapper itself strips its sized child element.
+    const textElement = element?.querySelector('span:last-child') ?? element;
+    if (textElement) textElement.textContent = value;
   };
 
   const loadCmsContent = async () => {

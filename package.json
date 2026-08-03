@@ -6,12 +6,14 @@
   "scripts": {
     "dev": "astro dev",
     "build": "node scripts/build-mirror.mjs",
-    "preview": "astro preview"
+    "preview": "astro preview",
+    "screenshots": "node scripts/capture-sitemap-screenshots.mjs"
   },
   "devDependencies": {
     "@types/node": "^24.3.0",
     "@astrojs/check": "^0.9.4",
     "astro": "^5.13.5",
+    "playwright": "^1.55.0",
     "typescript": "^5.9.2"
   }
 }
