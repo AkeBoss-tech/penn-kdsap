@@ -1,0 +1,40 @@
+media:
+  input: public/images
+  output: /images
+
+content:
+  - name: homepage
+    label: Homepage
+    type: file
+    path: content/home.json
+    fields:
+      - name: heroTitle
+        label: Hero title
+        type: string
+      - name: heroText
+        label: Hero text
+        type: text
+      - name: heroImage
+        label: Hero image
+        type: image
+      - name: newsletterTitle
+        label: Newsletter title
+        type: string
+      - name: newsletterText
+        label: Newsletter text
+        type: text
+      - name: newsletterUrl
+        label: Newsletter link
+        type: string
+      - name: recapTitle
+        label: Recap title
+        type: string
+      - name: recapText
+        label: Recap text
+        type: text
+      - name: aboutText
+        label: About Penn KDSAP
+        type: text
+      - name: contactText
+        label: Contact prompt
+        type: string
