@@ -14,6 +14,10 @@ for (const page of pages) {
   const staticLayoutScript = page === 'index.html'
     ? '<script src="js/complete-static-layout.js"></script>'
     : '<script src="../js/complete-static-layout.js"></script>';
+  const mobileStylesheet = page === 'index.html'
+    ? '<link rel="stylesheet" href="css/mobile.css">'
+    : '<link rel="stylesheet" href="../css/mobile.css">';
+  html = html.replace('</head>', `${mobileStylesheet}</head>`);
   html = html.replace('</body>', `${staticLayoutScript}</body>`);
   if (page === 'index.html') {
     html = html.replace('</body>', '<script src="js/home-carousel.js"></script></body>');
