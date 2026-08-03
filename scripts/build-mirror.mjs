@@ -22,5 +22,6 @@ for (const page of pages) {
 }
 
 await cp(join(root, 'public'), outputDirectory, { recursive: true });
+await cp(join(root, 'content'), join(outputDirectory, 'content'), { recursive: true });
 await writeFile(join(outputDirectory, '.nojekyll'), '');
 console.log(`Published ${pages.length} captured pages.`);

@@ -13,6 +13,8 @@ npm run dev
 
 ## Editing content
 
-The homepage is managed in `content/home.json`. Editors can use [Pages CMS](https://app.pagescms.org/) instead of editing files: sign in with GitHub, install the Pages CMS GitHub App for this repository, and select **Homepage**. Saving changes commits them to `main`, which automatically publishes the update through GitHub Pages.
+The homepage is managed in `content/home.json`. Editors can use [Pages CMS](https://app.pagescms.org/) instead of editing files: sign in with GitHub, install the Pages CMS GitHub App for the [Penn KDSAP repository](https://github.com/AkeBoss-tech/penn-kdsap), and select **Homepage**. Saving changes commits them to `main`, which automatically publishes the update through GitHub Pages.
+
+The CMS controls the homepage carousel, newsletter, recap, and introductory copy. To access it, the repository owner must complete the one-time Pages CMS GitHub App installation; editors then sign in with their own GitHub accounts and are granted repository access.
 
 Images uploaded through Pages CMS are stored in `public/images`.

@@ -2,6 +2,11 @@ media:
   input: public/images
   output: /images
 
+settings:
+  commit:
+    templates:
+      update: "content: update {name}"
+
 content:
   - name: homepage
     label: Homepage
@@ -22,6 +27,7 @@ content:
           - name: image
             label: Slide image
             type: image
+            required: true
       - name: newsletterTitle
         label: Newsletter title
         type: string

@@ -1,5 +1,5 @@
 (() => {
-  const slides = [
+  let slides = [
     {
       image: 'images/slide-screenings.jpg',
       eyebrow: 'We provide',
@@ -16,6 +16,30 @@
       title: 'PASSIONATE STUDENT VOLUNTEERS',
     },
   ];
+
+  const text = (selector, value) => {
+    if (!value) return;
+    const element = document.querySelector(selector);
+    if (element) element.textContent = value;
+  };
+
+  const loadCmsContent = async () => {
+    try {
+      const response = await fetch('content/home.json', { cache: 'no-store' });
+      if (!response.ok) return;
+      const content = await response.json();
+      if (Array.isArray(content.slides) && content.slides.length) slides = content.slides;
+      text('#comp-lcfkbipe', content.newsletterTitle);
+      text('#comp-lcfkbiph', content.newsletterText);
+      text('#comp-mms6apmb', content.recapTitle);
+      text('#comp-mms6apn5', content.recapText);
+      text('#comp-j9vj9ice', content.aboutText);
+      const newsletter = document.querySelector('#comp-lcfkbipi a');
+      if (newsletter && content.newsletterUrl) newsletter.href = content.newsletterUrl;
+    } catch {
+      // The captured homepage remains usable if content data is unavailable.
+    }
+  };
 
   const mount = () => {
     const carousel = document.querySelector('#comp-j9vivvf8');
@@ -51,8 +75,17 @@
     slides.forEach((slide, index) => {
       const element = document.createElement('section');
       element.className = 'static-carousel__slide';
-      element.style.backgroundImage = `url("${slide.image}")`;
-      element.innerHTML = `<div class="static-carousel__copy"><p class="static-carousel__eyebrow">${slide.eyebrow}</p><h1 class="static-carousel__title">${slide.title}</h1></div>`;
+      element.style.backgroundImage = `url("${String(slide.image).replace(/^\//, '')}")`;
+      const copy = document.createElement('div');
+      copy.className = 'static-carousel__copy';
+      const eyebrow = document.createElement('p');
+      eyebrow.className = 'static-carousel__eyebrow';
+      eyebrow.textContent = slide.eyebrow;
+      const title = document.createElement('h1');
+      title.className = 'static-carousel__title';
+      title.textContent = slide.title;
+      copy.append(eyebrow, title);
+      element.append(copy);
       slideContainer.append(element);
       const dot = document.createElement('button');
       dot.type = 'button';
@@ -79,5 +112,8 @@
     restart();
   };
 
-  window.addEventListener('load', () => window.setTimeout(mount, 500), { once: true });
+  window.addEventListener('load', async () => {
+    await loadCmsContent();
+    window.setTimeout(mount, 500);
+  }, { once: true });
 })();
