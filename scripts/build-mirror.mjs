@@ -11,6 +11,10 @@ await mkdir(outputDirectory, { recursive: true });
 
 for (const page of pages) {
   let html = await readFile(join(sourceDirectory, page), 'utf8');
+  const staticLayoutScript = page === 'index.html'
+    ? '<script src="js/complete-static-layout.js"></script>'
+    : '<script src="../js/complete-static-layout.js"></script>';
+  html = html.replace('</body>', `${staticLayoutScript}</body>`);
   if (page === 'index.html') {
     html = html.replace('</body>', '<script src="js/home-carousel.js"></script></body>');
   }
