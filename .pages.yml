@@ -8,15 +8,20 @@ content:
     type: file
     path: content/home.json
     fields:
-      - name: heroTitle
-        label: Hero title
-        type: string
-      - name: heroText
-        label: Hero text
-        type: text
-      - name: heroImage
-        label: Hero image
-        type: image
+      - name: slides
+        label: Homepage carousel slides
+        type: object
+        list: true
+        fields:
+          - name: eyebrow
+            label: Small heading
+            type: string
+          - name: title
+            label: Main heading
+            type: string
+          - name: image
+            label: Slide image
+            type: image
       - name: newsletterTitle
         label: Newsletter title
         type: string

@@ -1,7 +1,9 @@
 {
-  "heroTitle": "Free community health screenings",
-  "heroText": "Penn KDSAP works with community organizations to provide free kidney-health screenings and education in underserved Philadelphia neighborhoods.",
-  "heroImage": "/images/hero.jpg",
+  "slides": [
+    {"eyebrow": "We gather", "title": "PASSIONATE STUDENT VOLUNTEERS", "image": "/images/slide-volunteers.jpg"},
+    {"eyebrow": "We are", "title": "A FAMILY WITH THE COMMUNITY", "image": "/images/slide-community.jpg"},
+    {"eyebrow": "We provide", "title": "FREE COMMUNITY HEALTH SCREENINGS", "image": "/images/slide-screenings.jpg"}
+  ],
   "newsletterTitle": "KDSAP Fall 2025 Newsletter",
   "newsletterText": "Explore our work through the fall issue of our Penn KDSAP newsletter — highlighting our screenings, internal events, and committees!",
   "newsletterUrl": "https://www.canva.com/design/DAG-39MLQS8/yK1C4zY-AFYW2bjSPAbDAA/view?utm_content=DAG-39MLQS8&utm_campaign=designshare&utm_medium=link2&utm_source=uniquelinks&utlId=h0c4b80bced",
