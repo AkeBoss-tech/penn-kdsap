@@ -23,6 +23,28 @@ const setShareImage = (html) => html
   .replace(/(<meta property="og:image:width" content=")[^"]+("\/>)/g, (_, start, end) => `${start}1200${end}`)
   .replace(/(<meta property="og:image:height" content=")[^"]+("\/>)/g, (_, start, end) => `${start}630${end}`)
   .replace(/(<meta name="twitter:image" content=")[^"]+("\/>)/g, `$1${ogImageUrl}$2`);
+const configureContactForm = (html) => html
+  .replace(
+    '<form id="comp-keelgap4" class="AYCJGp comp-keelgap4 wixui-form">',
+    '<form id="comp-keelgap4" class="AYCJGp comp-keelgap4 wixui-form" action="https://formsubmit.co/pennkdsap@gmail.com" method="POST">',
+  )
+  .replace('name="name-*"', 'name="name"')
+  .replace(
+    '<textarea id="textarea_comp-keelgar2"',
+    '<textarea name="message" id="textarea_comp-keelgar2"',
+  )
+  .replace(
+    '</form><!--/$-->',
+    '<input type="hidden" name="_subject" value="New Penn KDSAP contact-form submission" /><input type="text" name="_honey" tabindex="-1" autocomplete="off" style="display:none" aria-hidden="true" /></form><!--/$-->',
+  );
+const contactFormSubmissionScript = `<script>
+  // Prevent archived Wix code from intercepting the hosted form submission.
+  document.addEventListener('submit', (event) => {
+    if (event.target instanceof HTMLFormElement && event.target.id === 'comp-keelgap4') {
+      event.stopImmediatePropagation();
+    }
+  }, true);
+</script>`;
 
 await rm(outputDirectory, { recursive: true, force: true });
 await mkdir(outputDirectory, { recursive: true });
@@ -38,6 +60,10 @@ for (const page of pages) {
     .replaceAll('https://www.pennkdsap.org', deploymentBase);
   html = localizeWixMedia(html);
   html = setShareImage(html);
+  if (page === 'contact-us.html') {
+    html = configureContactForm(html);
+    html = html.replace('</body>', `${contactFormSubmissionScript}</body>`);
+  }
   const staticLayoutScript = page === 'gallery.html'
     ? ''
     : page === 'index.html'

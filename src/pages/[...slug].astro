@@ -30,11 +30,30 @@ const image = capture(/<meta property="og:image" content="([^"]+)"/i);
 const styles = [...original.matchAll(/<style[^>]*>[\s\S]*?<\/style>/gi)].map((match) => match[0]).join('\n');
 const base = import.meta.env.BASE_URL.replace(/\/$/, '');
 const archivedBody = capture(/<body[^>]*>([\s\S]*?)<\/body>/i);
-const localizedBody = archivedBody
+let localizedBody = archivedBody
   .replaceAll('https://www.pennkdsap.org/', `${base}/`)
   .replaceAll('https://www.pennkdsap.org', base)
   .replaceAll(',blur_2', '')
   .replaceAll('w_146,h_98', 'w_2560,h_1300');
+
+// The archived Wix form has no working submission endpoint in this static site.
+// FormSubmit relays standard form posts to the organization's inbox.
+if (sourceName === 'contact-us.html') {
+  localizedBody = localizedBody
+    .replace(
+      '<form id="comp-keelgap4" class="AYCJGp comp-keelgap4 wixui-form">',
+      '<form id="comp-keelgap4" class="AYCJGp comp-keelgap4 wixui-form" action="https://formsubmit.co/pennkdsap@gmail.com" method="POST">',
+    )
+    .replace('name="name-*"', 'name="name"')
+    .replace(
+      '<textarea id="textarea_comp-keelgar2"',
+      '<textarea name="message" id="textarea_comp-keelgar2"',
+    )
+    .replace(
+      '</form><!--/$-->',
+      '<input type="hidden" name="_subject" value="New Penn KDSAP contact-form submission" /><input type="text" name="_honey" tabindex="-1" autocomplete="off" style="display:none" aria-hidden="true" /></form><!--/$-->',
+    );
+}
 const path = slug ? `/${slug}/` : '/';
 const canonical = new URL(`${import.meta.env.BASE_URL}${slug ? `${slug}/` : ''}`, Astro.site).toString();
 ---
@@ -64,5 +83,15 @@ const canonical = new URL(`${import.meta.env.BASE_URL}${slug ? `${slug}/` : ''}`
   </head>
   <body data-page={path}>
     <Fragment set:html={localizedBody} />
+    {sourceName === 'contact-us.html' && (
+      <script is:inline>
+        // Prevent the archived Wix client code from taking over this form submit.
+        document.addEventListener('submit', (event) => {
+          if (event.target instanceof HTMLFormElement && event.target.id === 'comp-keelgap4') {
+            event.stopImmediatePropagation();
+          }
+        }, true);
+      </script>
+    )}
   </body>
 </html>
