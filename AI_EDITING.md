@@ -24,9 +24,17 @@ For layout, navigation, accessibility, or new editable fields, use a GitHub
 branch and pull request. Give collaborators repository access appropriate for
 reviewing pull requests; do not share an owner account or a personal access token.
 
+Each contributor connects Claude or ChatGPT to *their own* GitHub account, then
+grants that tool access to this repository from its integration settings. They
+should clone or select the repository, create a branch, describe the desired
+page/element, and open a pull request. The repository includes
+[`CLAUDE.md`](CLAUDE.md), [`AGENTS.md`](AGENTS.md), and a pull-request template
+so AI tools and reviewers receive the same build and safety rules.
+
 Tell the AI tool to work only in the requested content or feature area, run
 `npm run verify:site`, and open a pull request. A maintainer should review the
-deployed preview and the diff before merging.
+deployed preview and the diff before merging. GitHub branch protection for
+`main` should require a pull request and one maintainer approval.
 
 AI tools and CMS editors must not change these without a maintainer's explicit
 approval:
