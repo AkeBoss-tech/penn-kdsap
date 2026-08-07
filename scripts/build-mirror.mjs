@@ -5,6 +5,7 @@ const root = process.cwd();
 const sourceDirectory = join(root, 'site-html-archive/pages');
 const outputDirectory = join(root, 'dist');
 const deploymentBase = '/penn-kdsap';
+const publicSiteUrl = 'https://akashdubey.me';
 const ogImageUrl = 'https://akashdubey.me/penn-kdsap/images/penn-kdsap-og.png';
 const pages = (await readdir(sourceDirectory)).filter((file) => file.endsWith('.html'));
 const galleryImageDirectory = join(root, 'public/images/gallery');
@@ -23,6 +24,18 @@ const setShareImage = (html) => html
   .replace(/(<meta property="og:image:width" content=")[^"]+("\/>)/g, (_, start, end) => `${start}1200${end}`)
   .replace(/(<meta property="og:image:height" content=")[^"]+("\/>)/g, (_, start, end) => `${start}630${end}`)
   .replace(/(<meta name="twitter:image" content=")[^"]+("\/>)/g, `$1${ogImageUrl}$2`);
+const setSeoUrls = (html, pagePath) => {
+  const canonicalUrl = `${publicSiteUrl}${deploymentBase}${pagePath}`;
+  const canonical = `<link rel="canonical" href="${canonicalUrl}"/>`;
+  const openGraphUrl = `<meta property="og:url" content="${canonicalUrl}"/>`;
+  const hasCanonical = /<link rel="canonical"/i.test(html);
+  const hasOpenGraphUrl = /<meta property="og:url"/i.test(html);
+
+  return html
+    .replace(/<link rel="canonical" href="[^"]*"\s*\/?\s*>/i, canonical)
+    .replace(/<meta property="og:url" content="[^"]*"\s*\/?\s*>/i, openGraphUrl)
+    .replace('</head>', `${hasOpenGraphUrl ? '' : openGraphUrl}<meta name="robots" content="index,follow"/>${hasCanonical ? '' : canonical}</head>`);
+};
 const configureContactForm = (html) => html
   .replace(
     '<form id="comp-keelgap4" class="AYCJGp comp-keelgap4 wixui-form">',
@@ -60,6 +73,8 @@ for (const page of pages) {
     .replaceAll('https://www.pennkdsap.org', deploymentBase);
   html = localizeWixMedia(html);
   html = setShareImage(html);
+  const pagePath = page === 'index.html' ? '/' : `/${page.slice(0, -5)}/`;
+  html = setSeoUrls(html, pagePath);
   if (page === 'contact-us.html') {
     html = configureContactForm(html);
     html = html.replace('</body>', `${contactFormSubmissionScript}</body>`);
@@ -86,5 +101,12 @@ for (const page of pages) {
 
 await cp(join(root, 'public'), outputDirectory, { recursive: true });
 await cp(join(root, 'content'), join(outputDirectory, 'content'), { recursive: true });
+const sitemapUrls = pages
+  .sort()
+  .map((page) => page === 'index.html' ? `${publicSiteUrl}${deploymentBase}/` : `${publicSiteUrl}${deploymentBase}/${page.slice(0, -5)}/`)
+  .map((url) => `  <url><loc>${url}</loc></url>`)
+  .join('\n');
+await writeFile(join(outputDirectory, 'sitemap.xml'), `<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n${sitemapUrls}\n</urlset>\n`);
+await writeFile(join(outputDirectory, 'robots.txt'), `User-agent: *\nAllow: /\n\nSitemap: ${publicSiteUrl}${deploymentBase}/sitemap.xml\n`);
 await writeFile(join(outputDirectory, '.nojekyll'), '');
 console.log(`Published ${pages.length} captured pages.`);
