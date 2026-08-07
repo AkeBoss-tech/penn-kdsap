@@ -9,7 +9,8 @@
     "download:wix-images": "node scripts/download-wix-images.mjs",
     "create:og-image": "node scripts/create-og-image.mjs",
     "preview": "astro preview",
-    "screenshots": "node scripts/capture-sitemap-screenshots.mjs"
+    "screenshots": "node scripts/capture-sitemap-screenshots.mjs",
+    "verify:site": "npm run build && node scripts/verify-site.mjs"
   },
   "devDependencies": {
     "@types/node": "^24.3.0",
