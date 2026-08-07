@@ -74,3 +74,15 @@ content:
             label: Introduction
             type: text
             required: true
+  - name: archived-pages
+    label: All other site pages
+    type: collection
+    path: site-html-archive/pages
+    format: code
+    exclude:
+      - index.html
+      - gallery.html
+    operations:
+      create: false
+      rename: false
+      delete: false
