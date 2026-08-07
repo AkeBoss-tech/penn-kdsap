@@ -11,6 +11,13 @@ const pages = (await readdir(sourceDirectory)).filter((file) => file.endsWith('.
 const galleryImageDirectory = join(root, 'public/images/gallery');
 const galleryImageFiles = (await readdir(galleryImageDirectory)).filter((file) => /\.jpe?g$/i.test(file)).sort();
 const galleryTemplate = await readFile(join(root, 'content/gallery-page.html'), 'utf8');
+const galleryContent = JSON.parse(await readFile(join(root, 'content/gallery.json'), 'utf8'));
+const escapeHtml = (value) => String(value)
+  .replaceAll('&', '&amp;')
+  .replaceAll('<', '&lt;')
+  .replaceAll('>', '&gt;')
+  .replaceAll('"', '&quot;')
+  .replaceAll("'", '&#39;');
 const galleryImages = galleryImageFiles.map((file, index) => {
   const alt = `Penn KDSAP event photo ${index + 1}`;
   const image = `../images/gallery/${file}`;
@@ -64,7 +71,10 @@ await mkdir(outputDirectory, { recursive: true });
 
 for (const page of pages) {
   let html = page === 'gallery.html'
-    ? galleryTemplate.replace('{{GALLERY_IMAGES}}', galleryImages)
+    ? galleryTemplate
+      .replace('{{GALLERY_TITLE}}', escapeHtml(galleryContent.title))
+      .replace('{{GALLERY_INTRODUCTION}}', escapeHtml(galleryContent.introduction))
+      .replace('{{GALLERY_IMAGES}}', galleryImages)
     : await readFile(join(sourceDirectory, page), 'utf8');
   // Preserve navigation within the GitHub Pages copy instead of returning to
   // the source Wix site. Links to other hosts are intentionally unchanged.

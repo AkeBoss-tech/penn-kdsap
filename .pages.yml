@@ -4,48 +4,73 @@ media:
 
 settings:
   commit:
+    # Show the editor's identity in the commit when Pages CMS has it.
+    identity: user
     templates:
       update: "content: update {name}"
 
 content:
-  - name: homepage
-    label: Homepage
-    type: file
-    path: content/home.json
-    fields:
-      - name: slides
-        label: Homepage carousel slides
-        type: object
-        list: true
+  - name: pages
+    label: Website pages
+    type: group
+    items:
+      - name: homepage
+        label: Homepage
+        type: file
+        path: content/home.json
+        format: json
+        operations:
+          delete: false
         fields:
-          - name: eyebrow
-            label: Small heading
+          - name: slides
+            label: Homepage carousel slides
+            type: object
+            list: true
+            fields:
+              - name: eyebrow
+                label: Small heading
+                type: string
+              - name: title
+                label: Main heading
+                type: string
+              - name: image
+                label: Slide image
+                type: image
+                required: true
+          - name: newsletterTitle
+            label: Newsletter title
             type: string
+          - name: newsletterText
+            label: Newsletter text
+            type: text
+          - name: newsletterUrl
+            label: Newsletter link
+            type: string
+          - name: recapTitle
+            label: Recap title
+            type: string
+          - name: recapText
+            label: Recap text
+            type: text
+          - name: aboutText
+            label: About Penn KDSAP
+            type: text
+          - name: contactText
+            label: Contact prompt
+            type: string
+      - name: gallery
+        label: Gallery
+        type: file
+        path: content/gallery.json
+        format: json
+        operations:
+          delete: false
+        fields:
           - name: title
-            label: Main heading
+            label: Page title
             type: string
-          - name: image
-            label: Slide image
-            type: image
             required: true
-      - name: newsletterTitle
-        label: Newsletter title
-        type: string
-      - name: newsletterText
-        label: Newsletter text
-        type: text
-      - name: newsletterUrl
-        label: Newsletter link
-        type: string
-      - name: recapTitle
-        label: Recap title
-        type: string
-      - name: recapText
-        label: Recap text
-        type: text
-      - name: aboutText
-        label: About Penn KDSAP
-        type: text
-      - name: contactText
-        label: Contact prompt
-        type: string
+          - name: introduction
+            label: Introduction
+            type: text
+            required: true
