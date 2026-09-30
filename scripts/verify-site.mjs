@@ -210,7 +210,7 @@ try {
       const map = document.querySelector('.screening-map').getBoundingClientRect();
       return {
         statisticsFit: [...document.querySelectorAll('.impact-item strong')].every(textFits),
-        headingFits: textFits(document.querySelector('.quick-events h2')),
+        headingFits: textFits(document.querySelector('.upcoming-calendar h2')),
         mapHasRoom: map.width >= 300 && map.height / map.width < 2,
         pageFits: document.documentElement.scrollWidth <= document.documentElement.clientWidth,
       };
@@ -220,6 +220,8 @@ try {
   await interactions.setViewportSize({ width: 1440, height: 900 });
   await interactions.emulateMedia({ reducedMotion: 'no-preference', colorScheme: 'dark' });
   await interactions.goto(`${localBase}/kidney-screenings/`);
+  if (await interactions.locator('main > section').nth(1).getAttribute('class') !== 'upcoming-calendar section' || await interactions.locator('[data-custom-calendar]').count() !== 1) issues.push('screening: upcoming calendar must appear directly below the hero');
+  const screeningsCalendarData = await interactions.locator('.upcoming-calendar [data-calendar-data]').textContent();
   if (await interactions.locator('[data-journey-step]').count() !== 8) issues.push('screening: all eight stations must be present');
   for (const index of [4, 7, 0]) {
     await interactions.locator('[data-journey-link]').nth(index).click();
@@ -246,6 +248,8 @@ try {
   if (!calendarAnalytics.some(([event]) => event === 'google_calendar_opened') || !calendarAnalytics.some(([event]) => event === 'google_calendar_subscribe_clicked')) issues.push('analytics: Google Calendar conversions are not captured');
   await interactions.goto(localBase);
   if (await interactions.locator('[data-custom-calendar]').count() !== 1) issues.push('home: native calendar is missing');
+  if (await interactions.locator('main > section').nth(1).getAttribute('class') !== 'upcoming-calendar section' || !(await interactions.locator('.upcoming-calendar').isVisible())) issues.push('home: calendar must be visible directly below the hero');
+  if (await interactions.locator('.upcoming-calendar [data-calendar-data]').textContent() !== screeningsCalendarData) issues.push('screening: calendar events must match the homepage');
   const sampleCards = interactions.locator('.custom-event').filter({ has: interactions.locator('.sample-badge') });
   if (await sampleCards.count() && !(await interactions.locator('.custom-calendar-notice').innerText()).includes('fictional')) issues.push('calendar: examples need a clear disclaimer');
   const screeningAnalytics = await interactions.evaluate(() => {

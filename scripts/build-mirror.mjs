@@ -225,7 +225,17 @@ const impactItems = homeContent.impact.items.map((item) => `
 const coordinate = (value) => Number.isFinite(Number(value)) ? Number(value) : 0;
 const mapPins = homeContent.communityMap.pins.map((pin, index) => `<span data-map-pin="${index}" data-latitude="${coordinate(pin.latitude)}" data-longitude="${coordinate(pin.longitude)}" data-name="${escapeHtml(pin.name)}" data-address="${escapeHtml(pin.address)}" data-date="${escapeHtml(pin.date)}" data-label="${escapeHtml(`${homeContent.communityMap.pinLabel}: ${pin.name}`)}"></span>`).join('');
 const mapSiteItems = homeContent.communityMap.pins.map((pin, index) => `<li data-map-site="${index}"><button type="button" data-map-site-button="${index}"><span>${index + 1}</span><span><strong>${escapeHtml(pin.name)}</strong><small>${escapeHtml(pin.address)}</small><small>${escapeHtml(pin.date)}</small></span></button></li>`).join('');
-const eventItems = renderCalendar({ id: 'home-calendar', title: 'Upcoming KDSAP events', events: featuredCalendarEvents, scope: 'upcoming', notice: calendarNotice(featuredCalendarEvents, communityFeed.unavailable || memberFeed.unavailable) });
+const renderUpcomingCalendar = (id, linkPrefix = '') => `<section class="upcoming-calendar section" aria-labelledby="${id}-title">
+  <div class="shell">
+    <div class="section-heading">
+      <p class="eyebrow eyebrow-dark">${escapeHtml(homeContent.quickEvents.eyebrow)}</p>
+      <h2 id="${id}-title">${escapeHtml(homeContent.quickEvents.title)}</h2>
+      <p>${escapeHtml(homeContent.quickEvents.introduction)}</p>
+      <a class="text-link" href="${linkPrefix}${escapeHtml(homeContent.quickEvents.actionUrl)}">${escapeHtml(homeContent.quickEvents.actionLabel)} <span aria-hidden="true">→</span></a>
+    </div>
+    ${renderCalendar({ id, title: 'Upcoming KDSAP events', events: featuredCalendarEvents, scope: 'upcoming', notice: calendarNotice(featuredCalendarEvents, communityFeed.unavailable || memberFeed.unavailable) })}
+  </div>
+</section>`;
 const storyItems = homeContent.stories.items.map((item, index) => `
             <figure class="story${index === 0 ? ' story-large' : ''}">
               <img src="${escapeHtml(assetPath(item.image))}" alt="${escapeHtml(item.imageAlt)}" width="1400" height="933" loading="lazy">
@@ -258,6 +268,7 @@ const renderNativeBody = (name, data) => {
         </div>
       </section>`).join('');
   if (name === 'screenings') return `
+      ${renderUpcomingCalendar('screenings-calendar', '../')}
       <section class="interior-section screening-journey" aria-labelledby="journey-title" data-journey>
         <div class="shell journey-layout">
           <div class="journey-intro">
@@ -403,6 +414,7 @@ for (const page of pages) {
       .replaceAll('{{HERO_SECONDARY_URL}}', escapeHtml(homeContent.hero.secondaryAction.url))
       .replaceAll('{{HERO_STUDENT_LABEL}}', escapeHtml(homeContent.hero.studentAction.label))
       .replaceAll('{{HERO_STUDENT_URL}}', escapeHtml(homeContent.hero.studentAction.url))
+      .replaceAll('{{UPCOMING_CALENDAR}}', renderUpcomingCalendar('home-calendar'))
       .replaceAll('{{PATHWAYS_EYEBROW}}', escapeHtml(homeContent.pathways.eyebrow))
       .replaceAll('{{PATHWAYS_TITLE}}', escapeHtml(homeContent.pathways.title))
       .replaceAll('{{PATHWAYS_INTRODUCTION}}', escapeHtml(homeContent.pathways.introduction))
@@ -425,12 +437,6 @@ for (const page of pages) {
       .replaceAll('{{MAP_SITE_ITEMS}}', mapSiteItems)
       .replaceAll('{{MAP_SOURCE_LABEL}}', escapeHtml(homeContent.communityMap.sourceLabel))
       .replaceAll('{{MAP_SOURCE_URL}}', escapeHtml(homeContent.communityMap.sourceUrl))
-      .replaceAll('{{EVENTS_EYEBROW}}', escapeHtml(homeContent.quickEvents.eyebrow))
-      .replaceAll('{{EVENTS_TITLE}}', escapeHtml(homeContent.quickEvents.title))
-      .replaceAll('{{EVENTS_INTRODUCTION}}', escapeHtml(homeContent.quickEvents.introduction))
-      .replaceAll('{{EVENT_ITEMS}}', eventItems)
-      .replaceAll('{{EVENTS_ACTION_LABEL}}', escapeHtml(homeContent.quickEvents.actionLabel))
-      .replaceAll('{{EVENTS_ACTION_URL}}', escapeHtml(homeContent.quickEvents.actionUrl))
       .replaceAll('{{MISSION_IMAGE}}', escapeHtml(assetPath(homeContent.mission.image)))
       .replaceAll('{{MISSION_IMAGE_ALT}}', escapeHtml(homeContent.mission.imageAlt))
       .replaceAll('{{MISSION_IMAGE_CAPTION}}', escapeHtml(homeContent.mission.imageCaption))

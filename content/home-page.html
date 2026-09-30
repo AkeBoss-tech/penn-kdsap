@@ -62,6 +62,8 @@
         </div>
       </section>
 
+      {{UPCOMING_CALENDAR}}
+
       <section class="audience-paths section" aria-labelledby="paths-title" data-reveal>
         <div class="shell">
           <div class="section-heading">
@@ -110,25 +112,14 @@
             <h2 id="locations-title">{{MAP_TITLE}}</h2>
             <p>{{MAP_INTRODUCTION}}</p>
           </div>
-          <div class="locations-events-grid">
-            <div class="screening-map-layout">
-              <div class="screening-map" role="group" aria-label="{{MAP_LABEL}}" data-screening-map>
-                <p class="map-fallback" data-map-fallback>{{MAP_FALLBACK_TEXT}}</p>
-                {{MAP_PINS}}
-              </div>
-              <ol class="map-site-list" aria-label="{{MAP_LIST_LABEL}}">
-                {{MAP_SITE_ITEMS}}
-              </ol>
+          <div class="screening-map-layout">
+            <div class="screening-map" role="group" aria-label="{{MAP_LABEL}}" data-screening-map>
+              <p class="map-fallback" data-map-fallback>{{MAP_FALLBACK_TEXT}}</p>
+              {{MAP_PINS}}
             </div>
-            <aside class="quick-events" aria-labelledby="quick-events-title">
-              <div class="quick-events-heading">
-              <p class="eyebrow">{{EVENTS_EYEBROW}}</p>
-              <h2 id="quick-events-title">{{EVENTS_TITLE}}</h2>
-              <p class="quick-events-intro">{{EVENTS_INTRODUCTION}}</p>
-              <a class="quick-events-link" href="{{EVENTS_ACTION_URL}}">{{EVENTS_ACTION_LABEL}} <span aria-hidden="true">→</span></a>
-              </div>
-              <div class="event-list">{{EVENT_ITEMS}}</div>
-            </aside>
+            <ol class="map-site-list" aria-label="{{MAP_LIST_LABEL}}">
+              {{MAP_SITE_ITEMS}}
+            </ol>
           </div>
           <a class="map-source text-link" href="{{MAP_SOURCE_URL}}">{{MAP_SOURCE_LABEL}} <span aria-hidden="true">→</span></a>
         </div>
