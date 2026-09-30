@@ -449,6 +449,9 @@ html[data-theme="dark"] .screening-map .leaflet-control-attribution a { color: #
 }
 
 .calendar-note { color: var(--muted); font-size: .85rem; margin-top: 24px; }
+.upcoming-calendar { background: var(--cream); }
+.upcoming-calendar .section-heading { max-width: 800px; }
+.upcoming-calendar .section-heading .text-link { display: inline-block; margin-top: 8px; font-weight: 800; }
 
 /* Native calendar surfaces share the site's light and dark color tokens. */
 .quick-events { display: block; }
