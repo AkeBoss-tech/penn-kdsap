@@ -381,7 +381,7 @@ const setSeoUrls = (html, pagePath) => {
   return html
     .replace(/<link rel="canonical" href="[^"]*"\s*\/?\s*>/i, canonical)
     .replace(/<meta property="og:url" content="[^"]*"\s*\/?\s*>/i, openGraphUrl)
-    .replace('</head>', `${hasOpenGraphUrl ? '' : openGraphUrl}<meta name="robots" content="index,follow"/>${hasCanonical ? '' : canonical}</head>`);
+    .replace('</head>', `${hasOpenGraphUrl ? '' : openGraphUrl}<meta name="robots" content="index,follow"/>${hasCanonical ? '' : canonical}<link rel="describedby" href="/llms.txt"><link rel="alternate" type="text/markdown" href="${pagePath}index.md"></head>`);
 };
 await rm(outputDirectory, { recursive: true, force: true });
 await mkdir(outputDirectory, { recursive: true });
@@ -524,3 +524,19 @@ await writeFile(join(outputDirectory, 'sitemap.xml'), `<?xml version="1.0" encod
 await writeFile(join(outputDirectory, 'robots.txt'), `User-agent: *\nAllow: /\n\nSitemap: ${publicSiteUrl}${deploymentBase}/sitemap.xml\n`);
 await writeFile(join(outputDirectory, '.nojekyll'), '');
 console.log(`Published ${pages.length} captured pages.`);
+
+// GitHub Pages serves this root file for unknown paths, including nested URLs.
+await writeFile(join(outputDirectory, '404.html'), await readFile(join(root, 'content/404-page.html'), 'utf8'));
+const pageSummaries = canonicalPageData.map((page) => {
+  const name = nativeFiles[`${page.route}.html`];
+  const data = name ? nativeContent[name] : homeContent;
+  const summary = name ? data.summary : homeContent.hero.summary;
+  const url = `${publicSiteUrl}/${page.route ? `${page.route}/` : ''}`;
+  return { page, data, summary: summary || data.metaDescription || homeContent.metaDescription, url };
+});
+for (const { page, data, summary, url } of pageSummaries) {
+  const sections = (data.sections || []).map((section) => `## ${section.title}\n\n${section.text || ''}`).join('\n\n');
+  const markdown = `# ${page.pageTitle}\n\n> ${summary}\n\nSource: ${url}\n\n${sections}\n\n[Visit the full page](${url})\n`;
+  await writeFile(join(outputDirectory, page.route, 'index.md'), markdown);
+}
+await writeFile(join(outputDirectory, 'llms.txt'), `# Penn KDSAP\n\n> Penn Kidney Disease Screening and Awareness Program: students, physicians, and community organizations working together on kidney health screening, education, and service in Philadelphia.\n\nThese files summarize the public website. Visit the linked full pages for complete information. Calendar entries marked sample are fictional, not confirmed events. Educational content is not individualized medical advice.\n\n## Pages\n\n${pageSummaries.map(({ page, summary, url }) => `- [${page.pageTitle}](${url}index.md): ${summary}`).join('\n')}\n`);

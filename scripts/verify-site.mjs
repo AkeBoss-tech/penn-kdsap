@@ -49,7 +49,7 @@ const server = createServer(async (request, response) => {
     const data = await readFile(file);
     response.writeHead(200, { 'content-type': contentTypes[extname(file)] ?? 'application/octet-stream' }).end(data);
   } catch {
-    response.writeHead(404).end('Not found');
+    response.writeHead(404, { 'content-type': 'text/html' }).end(await readFile(join(outputDirectory, '404.html')));
   }
 });
 
@@ -159,6 +159,21 @@ try {
       }
     }
     await page.close();
+  }
+  const missing = await browser.newPage();
+  for (const width of [390, 1440]) {
+    await missing.setViewportSize({ width, height: 900 });
+    const response = await missing.goto(`${localBase}/missing/nested/page/`);
+    if (response.status() !== 404) issues.push('404: missing route must return 404');
+    if (await missing.locator('h1').innerText() !== 'Let’s get you\nback on track.') issues.push('404: custom heading missing');
+    if (await missing.evaluate(() => document.documentElement.scrollWidth > innerWidth)) issues.push('404: horizontal overflow');
+    await missing.getByRole('link', { name: 'Back to home' }).click();
+    if (new URL(missing.url()).pathname !== '/') issues.push('404: home action broken');
+  }
+  await missing.close();
+  const llms = await readFile(join(outputDirectory, 'llms.txt'), 'utf8');
+  for (const [, url] of llms.matchAll(/\]\((https:\/\/www\.pennkdsap\.org[^)]+)\)/g)) {
+    await readFile(join(outputDirectory, new URL(url).pathname));
   }
   const interactions = await browser.newPage({ viewport: { width: 1440, height: 900 } });
   for (const width of [390, 768, 1440]) {
