@@ -6,7 +6,7 @@ This repository publishes a static site to GitHub Pages from `main`.
 
 1. Work on a branch; never push directly to `main`.
 2. Read the relevant page/template and preserve unrelated working changes.
-3. Keep all internal links relative to the deployed base path: `/penn-kdsap/`.
+3. Keep all internal links relative to the deployed base path: `/` (the custom domain root).
 
 ## Architecture
 
@@ -24,7 +24,7 @@ This repository publishes a static site to GitHub Pages from `main`.
 
 For a new page, use a native template in `content/` or a dedicated component in
 `public/`, then register its route in `scripts/build-mirror.mjs`. Do not copy a
-new external site into the project or reintroduce links to `www.pennkdsap.org`.
+new external site into the project or introduce links to unrelated hosts.
 
 Make new UI responsive at 390px and desktop widths, keyboard accessible, and
 use meaningful image alt text. Do not add medical advice or unverified health

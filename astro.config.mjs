@@ -1,7 +1,7 @@
 import { defineConfig } from 'astro/config';
 
 export default defineConfig({
-  site: 'https://akashdubey.me',
-  base: '/penn-kdsap',
+  site: 'https://www.pennkdsap.org',
+  base: '/',
   output: 'static',
 });
