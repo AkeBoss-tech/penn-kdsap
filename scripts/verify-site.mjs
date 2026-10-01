@@ -7,8 +7,8 @@ import sharp from 'sharp';
 const root = process.cwd();
 const outputDirectory = join(root, 'dist');
 const sourceDirectory = join(root, 'site-html-archive/pages');
-const deploymentBase = '/penn-kdsap';
-const publicSiteUrl = 'https://pennkdsap.github.io';
+const deploymentBase = '';
+const publicSiteUrl = 'https://www.pennkdsap.org';
 const pages = (await readdir(sourceDirectory)).filter((file) => file.endsWith('.html')).sort();
 const nativeFiles = new Set([
   'index.html', 'about.html', 'kidney-screenings.html', 'kdsap.html', 'calendar.html',
@@ -70,8 +70,8 @@ try {
     if ((html.match(/<link rel="canonical"/g) ?? []).length !== 1 || !html.includes(`href="${canonical}"`)) {
       issues.push(`${route}: canonical URL is missing or incorrect`);
     }
-    if (html.includes('href="https://www.pennkdsap.org')) {
-      issues.push(`${route}: still links to the source site`);
+    if (html.includes('https://pennkdsap.github.io/penn-kdsap')) {
+      issues.push(`${route}: still references the former GitHub Pages subpath`);
     }
     if (redirects[file] && !html.includes('content="noindex,follow"')) {
       issues.push(`${route}: redirect page is missing noindex,follow`);
@@ -134,7 +134,7 @@ try {
       const response = await page.goto(`${localBase}${route}`, { waitUntil: 'load' });
       await page.waitForTimeout(750);
       const result = await page.evaluate(() => ({
-        externalLinkFailures: [...document.querySelectorAll('a[href]')].filter((a) => /^https?:/.test(a.href) && ![location.origin, 'https://pennkdsap.github.io'].includes(new URL(a.href).origin) && (a.target !== '_blank' || !a.relList.contains('noopener'))).map((a) => a.href),
+        externalLinkFailures: [...document.querySelectorAll('a[href]')].filter((a) => /^https?:/.test(a.href) && ![location.origin, 'https://www.pennkdsap.org'].includes(new URL(a.href).origin) && (a.target !== '_blank' || !a.relList.contains('noopener'))).map((a) => a.href),
         width: document.documentElement.clientWidth,
         scrollWidth: document.documentElement.scrollWidth,
         height: document.body.scrollHeight,
